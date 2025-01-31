@@ -123,7 +123,7 @@ Create the following tables in your database. We have provided a file `schema.sq
 | ------------- | ---- |
 | membership_id |
 | member_id     |
-| type          |
+| type          | Basic, Premium |
 | start_date    |
 | end_date      |
 | status        | Active, Inactive |

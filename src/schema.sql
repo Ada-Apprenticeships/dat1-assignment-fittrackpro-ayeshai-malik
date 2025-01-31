@@ -8,6 +8,7 @@
 PRAGMA foreign_keys = ON;
 
 -- Drop existing tables  
+DROP TABLE IF EXISTS memberships;
 DROP TABLE IF EXISTS class_schedule;
 DROP TABLE IF EXISTS classes;
 DROP TABLE IF EXISTS equipment;  
@@ -186,8 +187,36 @@ VALUES
 (5, 8, '2025-02-01 19:00:00', '2025-02-01 20:00:00'),
 (5, 4, '2025-02-15 09:00:00', '2025-02-15 10:00:00');
 
--- 7. memberships
--- 8. attendance
+-- 7. memberships table
+CREATE TABLE memberships (  
+    membership_id INTEGER PRIMARY KEY AUTOINCREMENT,  
+    member_id INTEGER,
+    type TEXT CHECK (type IN ('Basic', 'Premium')) NOT NULL, 
+    start_date DATE NOT NULL,  
+    end_date DATE NOT NULL,   
+    status TEXT CHECK(status IN ('Active', 'Inactive')) NOT NULL,
+    FOREIGN KEY (member_id) REFERENCES members(member_id)
+);   
+
+-- Sample data for memberships
+INSERT INTO memberships (member_id, type, start_date, end_date, status)
+VALUES
+(1, 'Premium', '2024-11-01', '2025-10-31', 'Active'),
+(2, 'Basic', '2024-11-05', '2025-11-04', 'Active'),
+(3, 'Premium', '2024-11-10', '2025-11-09', 'Active'),
+(4, 'Basic', '2024-11-15', '2025-11-14', 'Active'),
+(5, 'Premium', '2024-11-20', '2025-11-19', 'Active'),
+(6, 'Basic', '2024-11-25', '2025-11-24', 'Inactive'),
+(7, 'Premium', '2024-12-01', '2025-11-30', 'Active'),
+(8, 'Basic', '2024-12-05', '2025-12-04', 'Active'),
+(9, 'Premium', '2024-12-10', '2025-12-09', 'Active'),
+(10, 'Basic', '2024-12-15', '2025-12-14', 'Inactive'),
+(11, 'Premium', '2024-12-20', '2025-12-19', 'Active'),
+(12, 'Basic', '2024-12-25', '2025-12-24', 'Active'),
+(13, 'Premium', '2025-01-01', '2025-12-31', 'Active'),
+(14, 'Basic', '2025-01-05', '2026-01-04', 'Inactive'),
+(15, 'Premium', '2025-01-10', '2026-01-09', 'Active');
+
 -- 9. class_attendance
 -- 10. payments
 -- 11. personal_training_sessions
@@ -215,12 +244,18 @@ VALUES
 -- JOIN locations ON equipment.location_id = locations.location_id;  
 
 -- -- Verify FK relationship between classes and locations
-SELECT classes.name AS class_name, classes.description, locations.name AS location_name  
-FROM classes  
-JOIN locations ON classes.location_id = locations.location_id;  
+-- SELECT classes.name AS class_name, classes.description, locations.name AS location_name  
+-- FROM classes  
+-- JOIN locations ON classes.location_id = locations.location_id;  
 
--- Retrieves schedule details using Foreign Key 
-SELECT class_schedule.schedule_id, classes.name AS class, staff.first_name, staff.last_name, class_schedule.start_time, class_schedule.end_time
-FROM class_schedule
-JOIN classes ON class_schedule.class_id = classes.class_id
-JOIN staff ON class_schedule.staff_id = staff.staff_id; 
+-- -- Retrieves schedule details using Foreign Key 
+-- SELECT class_schedule.schedule_id, classes.name AS class, staff.first_name || ' ' || staff.last_name AS staff_name, class_schedule.start_time, class_schedule.end_time
+-- FROM class_schedule
+-- JOIN classes ON class_schedule.class_id = classes.class_id
+-- JOIN staff ON class_schedule.staff_id = staff.staff_id; 
+
+-- Test the foreign key relationship between the memberships and members tables
+-- SELECT memberships.membership_id, members.first_name || ' ' || members.last_name AS member_name, memberships.type, memberships.start_date, memberships.end_date, memberships.status 
+-- FROM memberships 
+-- JOIN members 
+--     ON memberships.member_id = members.member_id;  
