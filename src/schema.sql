@@ -8,6 +8,12 @@
 PRAGMA foreign_keys = ON;
 
 -- Drop existing tables  
+DROP TABLE IF EXISTS equipment_maintenance_log;
+DROP TABLE IF EXISTS member_health_metrics;
+DROP TABLE IF EXISTS personal_training_sessions;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS class_attendance;
+DROP TABLE IF EXISTS attendance;
 DROP TABLE IF EXISTS memberships;
 DROP TABLE IF EXISTS class_schedule;
 DROP TABLE IF EXISTS classes;
@@ -217,7 +223,61 @@ VALUES
 (14, 'Basic', '2025-01-05', '2026-01-04', 'Inactive'),
 (15, 'Premium', '2025-01-10', '2026-01-09', 'Active');
 
--- 9. class_attendance
+
+-- 8. attendance table   
+CREATE TABLE attendance (  
+    attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,  
+    member_id INTEGER,  
+    location_id INTEGER,  
+    check_in_time DATETIME NOT NULL,  
+    check_out_time DATETIME NOT NULL,  
+    FOREIGN KEY (member_id) REFERENCES members(member_id),  
+    FOREIGN KEY (location_id) REFERENCES locations(location_id)  
+);  
+  
+-- Sample data for attendance  
+INSERT INTO attendance (member_id, location_id, check_in_time, check_out_time) VALUES  
+(1, 1, '2024-11-01 09:00:00', '2024-11-01 10:30:00'),  
+(2, 2, '2024-11-15 17:30:00', '2024-11-15 19:00:00'),  
+(3, 1, '2024-12-03 08:00:00', '2024-12-03 09:15:00'),  
+(4, 2, '2024-12-20 12:00:00', '2024-12-20 13:30:00'),  
+(5, 1, '2025-01-05 16:00:00', '2025-01-05 17:45:00'),  
+(6, 2, '2025-01-10 07:30:00', '2025-01-10 08:45:00'),  
+(7, 1, '2025-01-15 18:00:00', '2025-01-15 19:30:00'),  
+(8, 2, '2025-01-20 10:00:00', '2025-01-20 11:15:00'),  
+(9, 1, '2025-01-25 14:30:00', '2025-01-25 16:00:00'),  
+(10, 2, '2025-01-28 19:00:00', '2025-01-28 20:30:00');  
+  
+-- 9. class_attendance table  
+CREATE TABLE class_attendance (  
+    class_attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,  
+    schedule_id INTEGER,  
+    member_id INTEGER,  
+    attendance_status TEXT CHECK (attendance_status IN ('Registered', 'Attended', 'Unattended')) NOT NULL,  
+    FOREIGN KEY (schedule_id) REFERENCES class_schedule(schedule_id),  
+    FOREIGN KEY (member_id) REFERENCES members(member_id)  
+);  
+  
+-- Sample data for class_attendance  
+INSERT INTO class_attendance (schedule_id, member_id, attendance_status) VALUES  
+(1, 1, 'Attended'),  
+(2, 2, 'Attended'),  
+(3, 3, 'Attended'),  
+(4, 4, 'Attended'),  
+(5, 5, 'Attended'),  
+(6, 6, 'Registered'),  
+(7, 7, 'Registered'),  
+(8, 8, 'Registered'),  
+(1, 9, 'Attended'),  
+(2, 10, 'Unattended'),  
+(3, 11, 'Attended'),  
+(4, 12, 'Unattended'),  
+(5, 13, 'Attended'),  
+(6, 1, 'Registered'),  
+(7, 2, 'Registered'),  
+(8, 3, 'Registered');  
+
+
 -- 10. payments
 -- 11. personal_training_sessions
 -- 12. member_health_metrics
@@ -259,3 +319,16 @@ VALUES
 -- FROM memberships 
 -- JOIN members 
 --     ON memberships.member_id = members.member_id;  
+
+-- Retrieve all attendance records with members' full names and locations
+SELECT attendance.attendance_id, members.first_name || ' ' || members.last_name AS full_name, locations.name AS location_name, attendance.check_in_time, attendance.check_out_time  
+FROM attendance  
+JOIN members ON attendance.member_id = members.member_id  
+JOIN locations ON attendance.location_id = locations.location_id;  
+
+-- Test to retrieve the corresponding class name and members names using foreign keys
+SELECT class_attendance.class_attendance_id, classes.name AS class_name, members.first_name || ' ' || members.last_name AS member_name, class_attendance.attendance_status  
+FROM class_attendance  
+JOIN class_schedule ON class_attendance.schedule_id = class_schedule.schedule_id  
+JOIN classes ON class_schedule.class_id = classes.class_id  
+JOIN members ON class_attendance.member_id = members.member_id;  
