@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS locations;
 
 -- 1. locations table
 CREATE TABLE locations (
-    location_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location_id INTEGER PRIMARY KEY,
     name TEXT NOT NULL, 
     address TEXT NOT NULL,
     phone_number TEXT NOT NULL, 
