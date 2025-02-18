@@ -110,11 +110,12 @@ CREATE TABLE attendance (
     member_id INTEGER,  
     location_id INTEGER,  
     check_in_time DATETIME NOT NULL,  
-    check_out_time DATETIME NOT NULL,  
+    check_out_time DATETIME,
     FOREIGN KEY (member_id) REFERENCES members(member_id),  
     FOREIGN KEY (location_id) REFERENCES locations(location_id)  
 );  
-  
+-- Modified check_out_time to allow Nulls  
+
 -- 9. class_attendance table  
 CREATE TABLE class_attendance (  
     class_attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,  
