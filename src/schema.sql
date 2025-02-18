@@ -76,8 +76,8 @@ CREATE TABLE classes (
     class_id INTEGER PRIMARY KEY AUTOINCREMENT,    
     name TEXT NOT NULL,      
     description TEXT NOT NULL,    
-    capacity TEXT NOT NULL,    
-    duration TEXT NOT NULL,    
+    capacity INTEGER NOT NULL CHECK(capacity > 0), 
+    duration INTEGER NOT NULL CHECK(duration > 0),    
     location_id INTEGER,  
     FOREIGN KEY (location_id) REFERENCES locations(location_id)    
 ); 
@@ -88,7 +88,7 @@ CREATE TABLE class_schedule (
     class_id INTEGER,
     staff_id INTEGER, 
     start_time DATETIME NOT NULL,  
-    end_time DATETIME NOT NULL,  
+    end_time DATETIME NOT NULL CHECK (end_time > start_time),  
     FOREIGN KEY (class_id) REFERENCES classes(class_id),  
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)  
 );   
@@ -99,7 +99,7 @@ CREATE TABLE memberships (
     member_id INTEGER,
     type TEXT CHECK (type IN ('Basic', 'Premium')) NOT NULL, 
     start_date DATE NOT NULL,  
-    end_date DATE NOT NULL,   
+    end_date DATE NOT NULL CHECK(end_date > start_date),   
     status TEXT CHECK(status IN ('Active', 'Inactive')) NOT NULL,
     FOREIGN KEY (member_id) REFERENCES members(member_id)
 );   
@@ -156,8 +156,8 @@ CREATE TABLE member_health_metrics (
     measurement_date DATE NOT NULL,  
     weight REAL NOT NULL,  
     body_fat_percentage REAL NOT NULL,  
-    muscle_mass REAL NOT NULL,  
-    bmi REAL NOT NULL,  
+    muscle_mass REAL CHECK(muscle_mass >= 0),
+    bmi REAL CHECK(bmi >= 0), 
     FOREIGN KEY (member_id) REFERENCES members(member_id)  
 );  
 
