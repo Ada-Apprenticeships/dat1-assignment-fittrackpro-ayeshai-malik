@@ -26,10 +26,10 @@ DROP TABLE IF EXISTS locations;
 -- 1. locations table
 CREATE TABLE locations (
     location_id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL, 
+    name TEXT NOT NULL,
     address TEXT NOT NULL,
-    phone_number TEXT NOT NULL, 
-    email TEXT NOT NULL UNIQUE,
+    phone_number TEXT NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'),
+    email TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%'),
     opening_hours TEXT NOT NULL
 );
 
@@ -38,21 +38,21 @@ CREATE TABLE members (
     member_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    phone_number TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%'),
+    phone_number TEXT NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'), 
     date_of_birth DATE NOT NULL,
-    join_date DATE NOT NULL,
+    join_date DATE NOT NULL CHECK (join_date >= date_of_birth), 
     emergency_contact_name TEXT NOT NULL,
-    emergency_contact_phone TEXT NOT NULL
+    emergency_contact_phone TEXT NOT NULL CHECK (emergency_contact_phone GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]') 
 );
-
+ 
 -- 3. staff table
 CREATE TABLE staff (  
     staff_id INTEGER PRIMARY KEY AUTOINCREMENT,  
     first_name TEXT NOT NULL,  
     last_name TEXT NOT NULL,  
-    email TEXT NOT NULL UNIQUE,  
-    phone_number TEXT NOT NULL,  
+    email TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%'), 
+    phone_number TEXT NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'),  
     position TEXT CHECK(position IN ('Trainer', 'Manager', 'Receptionist', 'Maintenance')) NOT NULL,  
     hire_date DATE NOT NULL,  
     location_id INTEGER,

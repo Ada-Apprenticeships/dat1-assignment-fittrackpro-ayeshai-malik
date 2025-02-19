@@ -14,7 +14,7 @@ PRAGMA foreign_keys = ON;
 -- Insert a new payment record for member with Id 11
 -- Assuming a UNIQUE constraint exists on (member_id, payment_method, payment_type)
 
-INSERT OR IGNORE INTO payments (member_id, amount, payment_date, payment_method, payment_type) -- Prevents duplicate entries
+INSERT INTO payments (member_id, amount, payment_date, payment_method, payment_type)
 VALUES (11, 50.00, datetime('now'), 'Credit Card', 'Monthly membership fee');
 
 -- Validate the inserted payment record
@@ -73,17 +73,6 @@ WHERE
     payment_type = 'Day pass'
 ORDER BY 
     payment_date;
-
-
-
-
-
-
-
-
-
-
-
 
 
 -- -- Test to see if only one new row is added into payments which should be the case if the member_id, payment_method, payment_type is unique 
