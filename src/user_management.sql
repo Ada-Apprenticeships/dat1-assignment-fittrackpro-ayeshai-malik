@@ -47,7 +47,7 @@ WITH registration_summary AS (
         m.member_id,
         m.first_name,
         m.last_name,
-        -- Count of registered classes per number
+        -- Count of registered classes per member
         COUNT(ca.schedule_id) AS registration_count
     FROM
         members m
@@ -64,7 +64,7 @@ SELECT
     last_name, 
     registration_count
 FROM 
-    -- Previous summaried data 
+    -- Previous summarised data 
     registration_summary
 WHERE 
     -- Select members with the max number of registrations
@@ -95,6 +95,7 @@ SELECT
 FROM 
     registration_summary
 WHERE 
+    -- Select members with the lowest number of registrations
     registration_count = (SELECT MIN(registration_count) FROM registration_summary);
 
 
