@@ -36,33 +36,42 @@ ORDER BY check_in_time;
 -- 3. Find the busiest day of the week based on gym visits
 -- TODO: Write a query to find the busiest day of the week based on gym visits
 SELECT
-    strftime('%w', a.check_in_time) AS day_of_week,
-    COUNT(*) AS visit_count
+    CASE strftime('%w', a.check_in_time)
+        WHEN '0' THEN 'Sunday'
+        WHEN '1' THEN 'Monday'
+        WHEN '2' THEN 'Tuesday'
+        WHEN '3' THEN 'Wednesday'
+        WHEN '4' THEN 'Thursday'
+        WHEN '5' THEN 'Friday'
+        WHEN '6' THEN 'Saturday'
+    END AS day_of_week, -- Map the numeric day to its name for better readability
+    COUNT(*) AS visit_count -- Count the number of visits per day
 FROM
     attendance a
 GROUP BY
-    day_of_week
+    strftime('%w', a.check_in_time) -- Group by the numeric day of the week
 ORDER BY
-    visit_count DESC
-LIMIT 1;
+    visit_count DESC -- Order in descending order to get the busiest day
+LIMIT 1; -- Limit to the most visits
 
 -- 4. Calculate the average daily attendance for each location
 -- TODO: Write a query to calculate the average daily attendance for each location
 
+
 SELECT 
-    loc.name AS location_name,
-    AVG(visit_count) AS avg_daily_attendance
+    locations.name AS location_name,
+    AVG(visit_count) AS avg_daily_attendance -- Calculate the average daily attendance for each location
 FROM (
     SELECT 
         location_id,
-        date(check_in_time) AS visit_date,
-        COUNT(*) AS visit_count
+        date(check_in_time) AS visit_date, -- Convert check-in time to a date and extract the date
+        COUNT(*) AS visit_count -- Count the number of visits on each date for each location
     FROM 
         attendance
     GROUP BY 
-        location_id, visit_date
+        location_id, visit_date -- Group by location and visit date to calculate daily visit counts
 ) AS daily_visits
 JOIN 
-    locations AS loc ON daily_visits.location_id = loc.location_id
+    locations ON daily_visits.location_id = locations.location_id
 GROUP BY 
-    loc.location_id, location_name;
+    locations.location_id, locations.name; -- Group by location identifier and name to calculate average attendance per location
