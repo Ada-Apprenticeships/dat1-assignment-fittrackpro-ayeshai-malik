@@ -16,10 +16,10 @@ INSERT INTO attendance (member_id, location_id, check_in_time, check_out_time)
 VALUES 
     (7, 1, datetime('now'), NULL);
 
--- Test: Retrieve the most recent attendance record for member 7
-SELECT * 
-FROM attendance
-WHERE member_id = 7;
+-- -- Retrieve the most recent attendance record for member 7
+-- SELECT * 
+-- FROM attendance
+-- WHERE member_id = 7;
 
 -- 2. Retrieve a member's attendance history
 -- TODO: Write a query to retrieve a member's attendance history
@@ -35,12 +35,20 @@ ORDER BY check_in_time;
 
 -- 3. Find the busiest day of the week based on gym visits
 -- TODO: Write a query to find the busiest day of the week based on gym visits
-
+SELECT
+    strftime('%w', a.check_in_time) AS day_of_week,
+    COUNT(*) AS visit_count
+FROM
+    attendance a
+GROUP BY
+    day_of_week
+ORDER BY
+    visit_count DESC
+LIMIT 1;
 
 -- 4. Calculate the average daily attendance for each location
 -- TODO: Write a query to calculate the average daily attendance for each location
 
--- Calculate average daily attendance for each location
 SELECT 
     loc.name AS location_name,
     AVG(visit_count) AS avg_daily_attendance

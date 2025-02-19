@@ -40,18 +40,22 @@ FROM members;
 -- 4. Find member with the most class registrations
 -- TODO: Write a query to find the member with the most class registrations
 -- This query assumes that 'registration' is represented within the 'attendance_status' of 'Registered'
+-- Temporary result set (named subquery)
 
 WITH registration_summary AS (
     SELECT
         m.member_id,
         m.first_name,
         m.last_name,
+        -- Count of registered classes per number
         COUNT(ca.schedule_id) AS registration_count
     FROM
         members m
-    LEFT JOIN
+    LEFT JOIN -- All members considered even with zero registrations
+        -- Join with class attendance and match the members with their class attendance only in 'Registered' status
         class_attendance ca ON m.member_id = ca.member_id AND ca.attendance_status = 'Registered'
     GROUP BY
+        -- Group by member Id to count the registration for each member
         m.member_id
 )
 SELECT 
@@ -60,8 +64,10 @@ SELECT
     last_name, 
     registration_count
 FROM 
+    -- Previous summaried data 
     registration_summary
 WHERE 
+    -- Select members with the max number of registrations
     registration_count = (SELECT MAX(registration_count) FROM registration_summary);
 
 

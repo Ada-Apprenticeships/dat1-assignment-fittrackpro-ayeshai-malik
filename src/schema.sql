@@ -134,8 +134,9 @@ CREATE TABLE payments (
     payment_date DATE NOT NULL,   
     payment_method TEXT CHECK (payment_method IN ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash')) NOT NULL,    
     payment_type TEXT CHECK (payment_type IN ('Monthly membership fee', 'Day pass')) NOT NULL,     
-    FOREIGN KEY (member_id) REFERENCES members(member_id)    
-);  
+    FOREIGN KEY (member_id) REFERENCES members(member_id),
+    UNIQUE(member_id, payment_date, payment_method, payment_type)
+);
 
 -- 11. personal_training_sessions
 CREATE TABLE personal_training_sessions (    

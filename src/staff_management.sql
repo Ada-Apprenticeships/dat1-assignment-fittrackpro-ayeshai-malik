@@ -40,4 +40,3 @@ HAVING
     COUNT(pts.session_id) > 0 
 ORDER BY 
     session_count;
-
