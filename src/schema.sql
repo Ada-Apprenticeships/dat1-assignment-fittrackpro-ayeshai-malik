@@ -26,153 +26,153 @@ DROP TABLE IF EXISTS locations;
 -- 1. locations table
 CREATE TABLE locations (
     location_id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    address TEXT NOT NULL,
-    phone_number TEXT NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'),
-    email TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%'),
-    opening_hours TEXT NOT NULL
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(255) NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'),
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (email LIKE '%@%'),
+    opening_hours VARCHAR(255) NOT NULL
 );
 
 -- 2. members table
 CREATE TABLE members (
     member_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%'),
-    phone_number TEXT NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'), 
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (email LIKE '%@%'),
+    phone_number VARCHAR(255) NOT NULL,
     date_of_birth DATE NOT NULL,
-    join_date DATE NOT NULL CHECK (join_date >= date_of_birth), 
-    emergency_contact_name TEXT NOT NULL,
-    emergency_contact_phone TEXT NOT NULL CHECK (emergency_contact_phone GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]') 
+    join_date DATE NOT NULL CHECK (join_date >= date_of_birth),
+    emergency_contact_name VARCHAR(255) NOT NULL,
+    emergency_contact_phone VARCHAR(255) NOT NULL CHECK (emergency_contact_phone GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]')
 );
  
 -- 3. staff table
 CREATE TABLE staff (  
-    staff_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    first_name TEXT NOT NULL,  
-    last_name TEXT NOT NULL,  
-    email TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%'), 
-    phone_number TEXT NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'),  
-    position TEXT CHECK(position IN ('Trainer', 'Manager', 'Receptionist', 'Maintenance')) NOT NULL,  
-    hire_date DATE NOT NULL,  
+    staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (email LIKE '%@%'),
+    phone_number VARCHAR(255) NOT NULL CHECK (phone_number GLOB '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]'),
+    position VARCHAR(255) CHECK(position IN ('Trainer', 'Manager', 'Receptionist', 'Maintenance')) NOT NULL,
+    hire_date DATE NOT NULL,
     location_id INTEGER,
-    FOREIGN KEY (location_id) REFERENCES locations(location_id)  
-);  
+    FOREIGN KEY (location_id) REFERENCES locations(location_id)
+);
 
 -- 4. equipment table  
 CREATE TABLE equipment (    
-    equipment_id INTEGER PRIMARY KEY AUTOINCREMENT,    
-    name TEXT NOT NULL,      
-    type TEXT CHECK(type IN ('Cardio', 'Strength')) NOT NULL,    
-    purchase_date DATE NOT NULL,    
-    last_maintenance_date DATE NOT NULL,   
-    next_maintenance_date DATE NOT NULL,   
-    location_id INTEGER,  
-    FOREIGN KEY (location_id) REFERENCES locations(location_id)    
-); 
+    equipment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(255) CHECK(type IN ('Cardio', 'Strength')) NOT NULL,
+    purchase_date DATE NOT NULL,
+    last_maintenance_date DATE NOT NULL CHECK(last_maintenance_date >= purchase_date),
+    next_maintenance_date DATE NOT NULL CHECK(next_maintenance_date > last_maintenance_date),
+    location_id INTEGER,
+    FOREIGN KEY (location_id) REFERENCES locations(location_id)
+);
  
 -- 5. classes table 
-CREATE TABLE classes (    
-    class_id INTEGER PRIMARY KEY AUTOINCREMENT,    
-    name TEXT NOT NULL,      
-    description TEXT NOT NULL,    
-    capacity INTEGER NOT NULL CHECK(capacity > 0), 
-    duration INTEGER NOT NULL CHECK(duration > 0),    
-    location_id INTEGER,  
-    FOREIGN KEY (location_id) REFERENCES locations(location_id)    
-); 
+CREATE TABLE classes (
+    class_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    capacity INTEGER NOT NULL CHECK(capacity > 0),
+    duration INTEGER NOT NULL CHECK(duration > 0),
+    location_id INTEGER,
+    FOREIGN KEY (location_id) REFERENCES locations(location_id)
+);
 
 -- 6. class_schedule table  
-CREATE TABLE class_schedule (  
-    schedule_id INTEGER PRIMARY KEY AUTOINCREMENT,  
+CREATE TABLE class_schedule (
+    schedule_id INTEGER PRIMARY KEY AUTOINCREMENT,
     class_id INTEGER,
-    staff_id INTEGER, 
-    start_time DATETIME NOT NULL,  
-    end_time DATETIME NOT NULL CHECK (end_time > start_time),  
-    FOREIGN KEY (class_id) REFERENCES classes(class_id),  
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)  
-);   
+    staff_id INTEGER,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL CHECK (end_time > start_time),
+    FOREIGN KEY (class_id) REFERENCES classes(class_id),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);  
 
 -- 7. memberships table
-CREATE TABLE memberships (  
-    membership_id INTEGER PRIMARY KEY AUTOINCREMENT,  
+CREATE TABLE memberships (
+    membership_id INTEGER PRIMARY KEY AUTOINCREMENT,
     member_id INTEGER,
-    type TEXT CHECK (type IN ('Basic', 'Premium')) NOT NULL, 
-    start_date DATE NOT NULL,  
-    end_date DATE NOT NULL CHECK(end_date > start_date),   
-    status TEXT CHECK(status IN ('Active', 'Inactive')) NOT NULL,
+    type VARCHAR(255) CHECK (type IN ('Basic', 'Premium')) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL CHECK(end_date > start_date),
+    status VARCHAR(255) CHECK(status IN ('Active', 'Inactive')) NOT NULL,
     FOREIGN KEY (member_id) REFERENCES members(member_id)
-);   
+);  
 
 -- 8. attendance table   
-CREATE TABLE attendance (  
-    attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    member_id INTEGER,  
-    location_id INTEGER,  
-    check_in_time DATETIME NOT NULL,  
+CREATE TABLE attendance (
+    attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER,
+    location_id INTEGER,
+    check_in_time DATETIME NOT NULL,
     check_out_time DATETIME,
-    FOREIGN KEY (member_id) REFERENCES members(member_id),  
-    FOREIGN KEY (location_id) REFERENCES locations(location_id)  
-);  
+    FOREIGN KEY (member_id) REFERENCES members(member_id),
+    FOREIGN KEY (location_id) REFERENCES locations(location_id)
+);
 -- Modified check_out_time to allow Nulls  
 
 -- 9. class_attendance table  
-CREATE TABLE class_attendance (  
-    class_attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    schedule_id INTEGER,  
-    member_id INTEGER,  
-    attendance_status TEXT CHECK (attendance_status IN ('Registered', 'Attended', 'Unattended')) NOT NULL,  
-    FOREIGN KEY (schedule_id) REFERENCES class_schedule(schedule_id),  
-    FOREIGN KEY (member_id) REFERENCES members(member_id)  
-);  
+CREATE TABLE class_attendance (
+    class_attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    schedule_id INTEGER,
+    member_id INTEGER,
+    attendance_status VARCHAR(255) CHECK (attendance_status IN ('Registered', 'Attended', 'Unattended')) NOT NULL,
+    FOREIGN KEY (schedule_id) REFERENCES class_schedule(schedule_id),
+    FOREIGN KEY (member_id) REFERENCES members(member_id)
+); 
   
 -- 10. payments table
-CREATE TABLE payments (    
-    payment_id INTEGER PRIMARY KEY AUTOINCREMENT,   
-    member_id INTEGER,   
-    amount REAL NOT NULL,
-    payment_date DATE NOT NULL,   
-    payment_method TEXT CHECK (payment_method IN ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash')) NOT NULL,    
-    payment_type TEXT CHECK (payment_type IN ('Monthly membership fee', 'Day pass')) NOT NULL,     
+CREATE TABLE payments (
+    payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER,
+    amount REAL NOT NULL CHECK(amount > 0),
+    payment_date DATE NOT NULL,
+    payment_method VARCHAR(255) CHECK (payment_method IN ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash')) NOT NULL,
+    payment_type VARCHAR(255) CHECK (payment_type IN ('Monthly membership fee', 'Day pass')) NOT NULL,
     FOREIGN KEY (member_id) REFERENCES members(member_id),
     UNIQUE(member_id, payment_date, payment_method, payment_type)
 );
 
 -- 11. personal_training_sessions
-CREATE TABLE personal_training_sessions (    
-    session_id INTEGER PRIMARY KEY AUTOINCREMENT,   
-    member_id INTEGER,   
-    staff_id INTEGER, 
-    session_date REAL NOT NULL,
-    start_time DATETIME NOT NULL,  
-    end_time DATETIME NOT NULL, 
-    notes TEXT NOT NULL,   
+CREATE TABLE personal_training_sessions (
+    session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER,
+    staff_id INTEGER,
+    session_date DATE NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL CHECK (end_time > start_time),
+    notes VARCHAR(255) NOT NULL,
     FOREIGN KEY (member_id) REFERENCES members(member_id),
-    FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
-);  
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
 
 -- 12. member_health_metrics
-CREATE TABLE member_health_metrics (  
-    metric_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    member_id INTEGER NOT NULL,  
-    measurement_date DATE NOT NULL,  
-    weight REAL NOT NULL,  
-    body_fat_percentage REAL NOT NULL,  
+CREATE TABLE member_health_metrics (
+    metric_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER NOT NULL,
+    measurement_date DATE NOT NULL,
+    weight REAL NOT NULL CHECK(weight > 0),
+    body_fat_percentage REAL NOT NULL CHECK(body_fat_percentage >= 0),
     muscle_mass REAL CHECK(muscle_mass >= 0),
-    bmi REAL CHECK(bmi >= 0), 
-    FOREIGN KEY (member_id) REFERENCES members(member_id)  
-);  
+    bmi REAL CHECK(bmi >= 0),
+    FOREIGN KEY (member_id) REFERENCES members(member_id)
+); 
 
 -- 13. equipment_maintenance_log
-CREATE TABLE equipment_maintenance_log (  
-    log_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    equipment_id INTEGER NOT NULL,  
-    maintenance_date DATE NOT NULL,  
-    description TEXT NOT NULL,  
-    staff_id INTEGER,  
-    FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)  
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)    
-); 
+CREATE TABLE equipment_maintenance_log (
+    log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    equipment_id INTEGER NOT NULL,
+    maintenance_date DATE NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    staff_id INTEGER,
+    FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
 
 
 -- After creating the tables, you can import the sample data using:
