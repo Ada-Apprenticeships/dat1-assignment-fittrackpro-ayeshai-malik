@@ -1,7 +1,8 @@
 -- Initial SQLite setup
 .open fittrackpro.db
 .mode column
-.mode box
+-- Display results in a boxed formatting
+.mode box 
 
 -- Enable foreign key support
 PRAGMA foreign_keys = ON;
@@ -15,14 +16,14 @@ SELECT
     first_name,
     last_name,
     email,
-    phone_number,
-    date_of_birth,
     join_date
 FROM 
     members;
 
 -- 2. Update a member's contact information
 -- TODO: Write a query to update a member's contact information
+-- Update the phone number and email for member with ID 5
+
 UPDATE members
 SET
     phone_number = '555-9876',
@@ -32,6 +33,7 @@ WHERE
 
 -- 3. Count total number of members
 -- TODO: Write a query to count the total number of members
+
 SELECT COUNT(*) AS total_members 
 FROM members;
 
@@ -39,56 +41,55 @@ FROM members;
 -- TODO: Write a query to find the member with the most class registrations
 -- This query assumes that 'registration' is represented within the 'attendance_status' of 'Registered'
 
-WITH registration_counts AS (
+WITH registration_summary AS (
     SELECT
         m.member_id,
         m.first_name,
         m.last_name,
         COUNT(ca.schedule_id) AS registration_count
-    FROM members m
-    JOIN class_attendance ca
-        ON m.member_id = ca.member_id
-    WHERE ca.attendance_status = 'Registered'
-    GROUP BY m.member_id
+    FROM
+        members m
+    LEFT JOIN
+        class_attendance ca ON m.member_id = ca.member_id AND ca.attendance_status = 'Registered'
+    GROUP BY
+        m.member_id
 )
-SELECT *
-FROM registration_counts
-WHERE registration_count = (SELECT MAX(registration_count) FROM registration_counts);
+SELECT 
+    member_id, 
+    first_name, 
+    last_name, 
+    registration_count
+FROM 
+    registration_summary
+WHERE 
+    registration_count = (SELECT MAX(registration_count) FROM registration_summary);
 
--- SELECT 
---     ca.member_id,
---     m.first_name,
---     m.last_name,
---     COUNT(ca.schedule_id) AS registration_count
--- FROM
---     class_attendance ca
--- JOIN
---     members m ON ca.member_id = m.member_id
--- WHERE
---     ca.attendance_status = 'Registered'
--- GROUP BY
---     ca.member_id
--- ORDER BY
---     registration_count;
 
 -- 5. Find member with the least class registrations
 -- TODO: Write a query to find the member with the least class registrations
 
-WITH registration_counts AS (
+WITH registration_summary AS (
     SELECT
         m.member_id,
         m.first_name,
         m.last_name,
         COUNT(ca.schedule_id) AS registration_count
-    FROM members m
-    JOIN class_attendance ca
-        ON m.member_id = ca.member_id
-    WHERE ca.attendance_status = 'Registered'
-    GROUP BY m.member_id
+    FROM
+        members m
+    LEFT JOIN
+        class_attendance ca ON m.member_id = ca.member_id AND ca.attendance_status = 'Registered'
+    GROUP BY
+        m.member_id
 )
-SELECT *
-FROM registration_counts
-WHERE registration_count = (SELECT MIN(registration_count) FROM registration_counts);
+SELECT 
+    member_id, 
+    first_name, 
+    last_name, 
+    registration_count
+FROM 
+    registration_summary
+WHERE 
+    registration_count = (SELECT MIN(registration_count) FROM registration_summary);
 
 
 -- 6. Calculate the percentage of members who have attended at least one class
@@ -101,3 +102,5 @@ FROM
     members m
 LEFT JOIN 
     class_attendance ca ON m.member_id = ca.member_id AND ca.attendance_status = 'Attended'; 
+
+
