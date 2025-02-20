@@ -46,4 +46,4 @@ ORDER BY
 
 -- Notes: JULIANDAY retrieves the current date
 --        It converts the 'purchase_date' of each equioment to a Julian Day number
---        Subtract the purchase date from the current date to get the a
+--        Subtract the purchase date from the current date to get the average

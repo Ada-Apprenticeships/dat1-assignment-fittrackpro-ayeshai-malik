@@ -47,8 +47,8 @@ GROUP BY
 ORDER BY 
     cs.start_time;
 
-3. Register a member for a class
-TODO: Write a query to register a member for a class
+-- 3. Register a member for a class
+-- TODO: Write a query to register a member for a class
 
 -- -- Check the schedule_id on the spin class' for '2025-02-01'
 -- SELECT 
